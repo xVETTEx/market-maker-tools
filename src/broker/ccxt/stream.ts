@@ -10,11 +10,6 @@ const HEARTBEAT_TIMEOUT = 60 * 1000 * 3 + 1000;
 const RESTART_TIMEOUT = 60 * 60 * 1000;
 
 class CcxtStream extends Stream {
-  private isAlive = false;
-  private socket!: WebSocket;
-  private pingTimeout!: ReturnType<typeof setTimeout>;
-  private restartTimeout!: ReturnType<typeof setTimeout>;
-
   constructor(private logger: Logger, private tradingPair: string) {
     super();
   }
@@ -74,15 +69,6 @@ class CcxtStream extends Stream {
       this.logger.info(`${this.tradingPair} stream closed with reason: ${event.reason}`);
     } else {
       this.logger.info(`${this.tradingPair} stream closed`);
-    }
-  }
-
-  private restart = async () => {
-    try {
-      // restart if heartbeat fails
-      await this.start();
-    } catch (e) {
-      this.logger.error(`${this.tradingPair} failed to restart stream: ${e}`);
     }
   }
 
