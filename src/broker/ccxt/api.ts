@@ -21,7 +21,7 @@ import {
   LimitOrderRequest,
   StopLimitOrderRequest,
 } from '../exchange';
-import { BinanceOrder } from './order';
+import { CcxtOrder } from './order';
 
 type PingResponse = {};
 
@@ -375,9 +375,9 @@ class BinanceAPI extends ExchangeAPI {
 
   public newOrder = (
     orderRequest: LimitOrderRequest | StopLimitOrderRequest,
-  ): BinanceOrder => {
+  ): CcxtOrder => {
     const orderId = uuidv4();
-    const order = new BinanceOrder({
+    const order = new CcxtOrder({
       ...orderRequest,
       orderId,
       api: this,
