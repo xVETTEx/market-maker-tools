@@ -217,50 +217,33 @@ class ArbitrageTrade {
       return;
     }
     this.logger.info(`order ${orderId} was successfully swapped - init trade on Binance`);
-    if (this.openDexBuyOrder && this.openDexBuyOrder.orderId === orderId) {
-      const binanceSellOrder = this.binance.newOrder({
-        quantity: quantityInCoins,
-        orderId: uuidv4(),
-        baseAsset: CURRENCIES.Binance[this.baseAsset],
-        quoteAsset: CURRENCIES.Binance[this.quoteAsset],
-        orderType: OrderType.Limit,
-        orderSide: OrderSide.Sell,
-        price: this.price!,
-      });
-      binanceSellOrder.on('complete', (orderId: string) => {
-        this.logger.info(`binance sell order ${orderId} complete - arbitrage trade finished`);
-      });
-      binanceSellOrder.on('failure', (reason: string) => {
-        this.logger.info(`sell order failed: ${reason}`);
-      });
-      binanceSellOrder.on('fill', () => {
-        this.logger.info('sell order partially filled - arbitrage trade complete');
-      });
-      await binanceSellOrder.start();
+    let orderSide = 
+    //if (this.opendexBuyOrder && this.openDexBuyOrder.orderId === orderId){
+    //orderSide = sell;
+    //} else{
+    //orderSide = buy;
     }
-    if (this.openDexSellOrder && this.openDexSellOrder.orderId === orderId) {
-      const binanceBuyOrder = this.binance.newOrder({
-        quantity: quantityInCoins,
-        orderId: uuidv4(),
-        baseAsset: CURRENCIES.Binance[this.baseAsset],
-        quoteAsset: CURRENCIES.Binance[this.quoteAsset],
-        orderType: OrderType.Limit,
-        orderSide: OrderSide.Buy,
-        price: this.price!,
+    const order = this.exchange.newOrder({
+      quantity: quantityInCoins,
+      orderId: uuidv4(),
+      baseAsset: CURRENCIES.exchange[this.baseAsset],
+      quoteAsset: CURRENCIES.excange[this.quoteAsset],
+      orderType: OrderType.Limit,
+      orderSide: orderSide,
+      price: this.price!,
       });
-      binanceBuyOrder.on('complete', (orderId: string) => {
-        this.logger.info(`binance sell order ${orderId} complete - arbitrage trade finished`);
+      order.on('complete', (orderId: string) => {
+        this.logger.info(`binance orderside order ${orderId} complete - arbitrage trade finished`); //kuinka orderside näkymään? $?
       });
-      binanceBuyOrder.on('failure', (reason: string) => {
-        this.logger.info(`sell order failed: ${reason}`);
+      order.on('failure', (reason: string) => {
+        this.logger.info(`orderside order failed: ${reason}`); //orderside
       });
-      binanceBuyOrder.on('fill', () => {
-        this.logger.info('sell order partially filled - arbitrage trade complete');
+      order.on('fill', () => {
+        this.logger.info('orderside order partially filled - arbitrage trade complete'); //orderside
       });
-      await binanceBuyOrder.start();
+      await order.start();
     }
   }
-
 }
 
 export { ArbitrageTrade };
