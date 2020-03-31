@@ -158,44 +158,10 @@ class ArbitrageTrade {
   }
 
   private getAssets = async () => {
-    let openDexBaseAssetMaxSell = 0;
-    let openDexQuoteAssetMaxBuy = 0;
-    this.openDexAssets = await this.opendex.getAssets();
-    this.openDexAssets.forEach((ownedAsset) => {
-      if (
-        CURRENCIES.OpenDex[this.baseAsset] === ownedAsset.asset
-      ) {
-        if (ownedAsset.maxsell) {
-          openDexBaseAssetMaxSell = parseFloat(
-            satsToCoinsStr(ownedAsset.maxsell),
-          );
-        }
-        this.logger.info(`opendex baseAsset ${ownedAsset.asset}: ${ownedAsset.free} (free), ${ownedAsset.locked} (locked), ${ownedAsset.maxbuy} (maxbuy), ${ownedAsset.maxsell}`);
-      } else if (CURRENCIES.OpenDex[this.quoteAsset] === ownedAsset.asset) {
-        if (ownedAsset.maxbuy) {
-          openDexQuoteAssetMaxBuy = parseFloat(
-            satsToCoinsStr(ownedAsset.maxbuy),
-          );
-        }
-        this.logger.info(`opendex quoteAsset ${ownedAsset.asset}: ${ownedAsset.free} (free), ${ownedAsset.locked} (locked), ${ownedAsset.maxbuy} (maxbuy), ${ownedAsset.maxsell}`);
-      }
-    });
-    let binanceBaseAsset = 0;
-    let binanceQuoteAsset = 0;
-    if (!this.binanceAssets.length) {
-      this.binanceAssets = await this.binance.getAssets();
-    }
-    this.binanceAssets.forEach((ownedAsset) => {
-      if (
-        CURRENCIES.Binance[this.baseAsset] === ownedAsset.asset
-      ) {
-        binanceBaseAsset = ownedAsset.free;
-        this.logger.info(`binance baseAsset ${ownedAsset.asset}: ${ownedAsset.free} (free), ${ownedAsset.locked} (locked)`);
-      } else if (CURRENCIES.Binance[this.quoteAsset] === ownedAsset.asset) {
-        binanceQuoteAsset = ownedAsset.free;
-        this.logger.info(`binance quoteAsset ${ownedAsset.asset}: ${ownedAsset.free} (free), ${ownedAsset.locked} (locked)`);
-      }
-    });
+    let opendexBaseAssetMaxSell = getAssetToCertainExchange(exchange, baseAsset);
+    let opendexQuoteAssetMaxBuy = getAssetToCertainExchange(exchange, quoteAsset);
+    let exchnageBaseAsset = getAssetToCertainExchange(exchange, baseAsset);
+    let exchangeQuoteAsset = getAssetToCertainExchange(exchange, quoteAsset);
     this.sellQuantity = Math.min(openDexBaseAssetMaxSell, binanceBaseAsset);
     if (this.sellQuantity > limits[this.baseAsset]) {
       this.sellQuantity = limits[this.baseAsset];
@@ -210,6 +176,20 @@ class ArbitrageTrade {
     }
     this.logger.info(`setting ${this.quoteAsset} buy quantity to ${this.buyQuantity}`);
   }
+
+  private get_assets_to_certain_exchange = async(exchange, asset) => {
+    let asset = 0;
+    this.exchangeAssets.forEach((ownedAsset) => {
+      if (
+          CURRENCIES.exchange[this.asset] === ownedAsset.asset
+        ) {
+           baseAsset = ownedAsset.free;
+           this.logger.info(exchange`asset ${ownedAsset.asset}: ${ownedAsset.free} (free), ${ownedAsset.locked} (locked)`); //exchangen pitäis olla tuol sisällä. Pitäiskö $ merkkiä käytää joteni?
+          }
+        }
+      });
+    return asset //kuinka returnaa? Pitikö funktion alkuun nää typet määrittää?
+}
 
   public close = async () => {
     this.closed = true;
