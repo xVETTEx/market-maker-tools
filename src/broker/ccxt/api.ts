@@ -352,16 +352,8 @@ class CcxtAPI extends ExchangeAPI {
       if (process.env.LIVE_TRADING) {
         url = `${ORDER_URL}?signature=${this.signRequest(queryStringData)}`;
       }
-      const response = await axios({
-        url,
-        method: 'post',
-        data: queryStringData,
-        headers: {
-          'X-MBX-APIKEY': this.apiKey,
-          'Content-type': 'application/x-www-form-urlencoded',
-        },
-      });
-      return response.data;
+      const response = await ; //tähän ccxt:n newOrder
+      return response.data; //onko data oikea
     } catch (e) {
       if (e.response && e.response.data && e.response.data.msg) {
         this.logger.error(`failed to create new order: ${e.response.data.msg}`);
