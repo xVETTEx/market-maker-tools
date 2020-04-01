@@ -5,9 +5,6 @@ import { Logger } from '../../logger';
 // If we haven't received a ping during this time we'll consider
 // socket dead.
 const HEARTBEAT_TIMEOUT = 60 * 1000 * 3 + 1000;
-// Since Binance allows to keep a single socket alive for maximum of 24h we're
-// recrating the socket after the specified amount of time
-const RESTART_TIMEOUT = 60 * 60 * 1000;
 
 class CcxtStream extends Stream {
   constructor(private logger: Logger, private tradingPair: string) {
@@ -18,9 +15,6 @@ class CcxtStream extends Stream {
     return new Promise((resolve) => {
       clearTimeout(this.pingTimeout);
       clearTimeout(this.restartTimeout);
-      const url = `wss://stream.binance.com:9443/ws/${this.tradingPair.toLowerCase()}@aggTrade`;
-      this.socket = new WebSocket(url);
-
       this.socket.onopen = () => {
         this.logger.info(`${this.tradingPair} established connection to ${url}`);
       };
