@@ -1,5 +1,4 @@
 import assert from 'assert';
-import axios from 'axios';
 import ccxt ;
 import crypto from 'crypto';
 import querystring from 'querystring';
@@ -23,17 +22,7 @@ import {
 } from '../exchange';
 import { CcxtOrder } from './order';
 
-type PingResponse = {};
-
-const API_BASE_URL = 'https://api.binance.com';
-const ACCOUNT_URL = `${API_BASE_URL}/api/v3/account`;
-const TEST_ORDER_URL = `${API_BASE_URL}/api/v3/order/test`;
-const ORDER_URL = `${API_BASE_URL}/api/v3/order`;
-const EXCHANGE_INFO_URL = `${API_BASE_URL}/api/v3/exchangeInfo`;
-const AVERAGE_PRICE = `${API_BASE_URL}/api/v3/avgPrice`;
-const PING_URL = `${API_BASE_URL}/api/v1/ping`;
-
-type QueryOrderResponseBinance = {
+type QueryOrderResponseCcxt = {
   symbol: string,
   status: OrderStatus,
 };
@@ -102,33 +91,11 @@ type RawBalance = {
   locked: string,
 };
 
-type AccountInfo = {
-  balances: RawBalance[],
-};
-
-require('axios-debug-log')({
-  request(debug: any, config: any) {
-    debug(`Request with ${config.headers['content-type']}`);
-  },
-  response(debug: any, response: any) {
-    debug('Received HTTP response', response);
-    debug(`
-      Response with ${response.headers['content-type']},
-      from ${response.config.url},
-    `);
-  },
-  error(debug: any, error: any) {
-    debug('HTTP error', error);
-  },
-});
-
-const PING_INTERVAL = 180000;
-const EXCHANGE_INFO_INTERVAL = 300000;
+const GET_ASSETS_INTERVAL = 300000;
 const UPDATE_AVERAGE_PRICES_INTERVAL = 300000;
 
-class BinanceAPI extends ExchangeAPI {
-  private pingInterval: ReturnType<typeof setInterval> | undefined;
-  private exchangeInfoInterval: ReturnType<typeof setInterval> | undefined;
+class CcxtAPI extends ExchangeAPI {
+  private getAssetsInterval: ReturnType<typeof setInterval> | undefined;
   private updateAveragePricesInterval: ReturnType<typeof setInterval> | undefined;
   private exchangeInfo: ExchangeInfoResponse | undefined;
   private averageAssetPrices = new Map<string, number>();
@@ -152,9 +119,6 @@ class BinanceAPI extends ExchangeAPI {
   }
 
   public start = async (activeTradingPairs?: Set<string>): Promise<any> => {
-    this.pingInterval = setInterval(() => {
-      this.ping();
-    }, PING_INTERVAL);
     this.exchangeInfoInterval = setInterval(() => {
       this.getExchangeInfo();
     }, EXCHANGE_INFO_INTERVAL);
@@ -164,14 +128,13 @@ class BinanceAPI extends ExchangeAPI {
     this.updateAveragePricesInterval = setInterval(() => {
       this.setAveragePrices();
     }, UPDATE_AVERAGE_PRICES_INTERVAL);
-    await this.ping();
     await this.getExchangeInfo();
     await this.setAveragePrices();
     const exchangeId = 'binance'
     , exchangeClass = ccxt[exchangeId]
     , exchange = new exchangeClass ({
-        'apiKey': 'YOUR_API_KEY',
-        'secret': 'YOUR_SECRET',
+        'apiKey': apiKey,
+        'secret': apiSecret,
         'timeout': 30000,
         'enableRateLimit': true,
     })
@@ -196,21 +159,12 @@ class BinanceAPI extends ExchangeAPI {
   }
 
   public stop = async () => {
-    if (this.pingInterval) {
-      clearInterval(this.pingInterval);
-    }
-    if (this.exchangeInfoInterval) {
-      clearInterval(this.exchangeInfoInterval);
+    if (this.getAssetsInterval) {
+      clearInterval(this.getAssetsInterval);
     }
     if (this.updateAveragePricesInterval) {
       clearInterval(this.updateAveragePricesInterval);
     }
-  }
-
-  public ping = async (): Promise<PingResponse> => {
-    const response = await axios.get(PING_URL);
-    assert.equal(response.status, 200);
-    return response.data;
   }
 
   public getExchangeInfo = async (): Promise<ExchangeInfoResponse | undefined> => {
@@ -244,8 +198,6 @@ class BinanceAPI extends ExchangeAPI {
   }
 
   private cancelOrderInternal = async (cancelOrder: CancelOrderRequest): Promise<void> => {
-    const recvWindow = 5000;
-    const timestamp = new Date().getTime();
     const { tradingPair, orderId } = cancelOrder;
     const queryString = `timestamp=${timestamp}&recvWindow=${recvWindow}&symbol=${tradingPair}&origClientOrderId=${orderId}`;
     try {
@@ -268,22 +220,11 @@ class BinanceAPI extends ExchangeAPI {
     }
   }
 
-  private queryOrderInternal = async (queryOrder: QueryOrderRequest): Promise<QueryOrderResponseBinance> => {
+  private queryOrderInternal = async (queryOrder: QueryOrderRequest): Promise<QueryOrderResponseCcxt> => {
     if (process.env.LIVE_TRADING) {
-      const recvWindow = 5000;
-      const timestamp = new Date().getTime();
       const { tradingPair, orderId } = queryOrder;
-      const queryString = `timestamp=${timestamp}&recvWindow=${recvWindow}&symbol=${tradingPair}&origClientOrderId=${orderId}`;
-      try {
-        const response = await axios.get(
-          `${ORDER_URL}?${queryString}&signature=${this.signRequest(queryString)}`,
-          {
-            headers: {
-              'X-MBX-APIKEY': this.apiKey,
-            },
-          },
-        );
-        return response.data;
+      //tähän ccxt komento jolla querytään const balances = await;
+      return response.data; //onko tää data se mitä haluun responsaa?
       } catch (e) {
         if (e.response && e.response.data && e.response.data.msg) {
           this.logger.error(`failed to query order info: ${e.response.data.msg}`);
@@ -336,29 +277,9 @@ class BinanceAPI extends ExchangeAPI {
   }
 
   public getAveragePrice = async (sym: string): Promise<AvgPriceResponse> => {
-    const response = await axios.get(`${AVERAGE_PRICE}?symbol=${sym}`);
+    const response = await ;
     assert.equal(response.status, 200);
     return { sym, price: response.data.price };
-  }
-
-  public accountInfo = async (): Promise<AccountInfo> => {
-    const recvWindow = 5000;
-    const timestamp = new Date().getTime();
-    const queryString = `timestamp=${timestamp}&recvWindow=${recvWindow}`;
-    try {
-      const response = await axios.get(
-          `${ACCOUNT_URL}?${queryString}&signature=${this.signRequest(queryString)}`,
-        {
-          headers: {
-            'X-MBX-APIKEY': this.apiKey,
-          },
-        },
-        );
-      return response.data;
-    } catch (e) {
-      this.logger.error(`failed to fetch account info ${JSON.stringify(e)}`);
-      return { balances: [] };
-    }
   }
 
   public getAssets = async (): Promise<Balance[]> => {
@@ -474,13 +395,6 @@ class BinanceAPI extends ExchangeAPI {
       this.logger.info(`updated 5 minute average price for ${averagePriceResponse.sym}: ${averagePriceResponse.price}`);
       this.averageAssetPrices.set(averagePriceResponse.sym, parseFloat(averagePriceResponse.price));
     });
-  }
-
-  private signRequest = (query: string): string => {
-    return crypto
-      .createHmac('sha256', this.apiSecret)
-      .update(query)
-      .digest('hex');
   }
 
 }
