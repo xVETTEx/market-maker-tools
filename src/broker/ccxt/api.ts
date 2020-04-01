@@ -167,19 +167,6 @@ class CcxtAPI extends ExchangeAPI {
     }
   }
 
-  public getExchangeInfo = async (): Promise<ExchangeInfoResponse | undefined> => {
-    try {
-      const response = await axios.get(EXCHANGE_INFO_URL);
-      assert.equal(response.status, 200);
-      this.exchangeInfo = response.data;
-      this.logger.info('exchangeInfo updated');
-      return response.data;
-    } catch (e) {
-      this.logger.error(`failed to fetch exchange info ${e}`);
-      return;
-    }
-  }
-
   public queryOrder = async (queryOrderRequest: QueryOrderRequest): Promise<QueryOrderResponse> => {
     const queryOrderResponse = await this.queryOrderInternal(queryOrderRequest);
     return {
