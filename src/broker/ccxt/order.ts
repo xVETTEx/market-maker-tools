@@ -6,15 +6,15 @@ import {
   LimitOrderRequest,
   StopLimitOrderRequest,
 } from '../exchange';
-import { BinanceAPI } from './api';
+import { CcxtAPI } from './api';
 import { Order } from '../order';
 
-class BinanceOrder extends Order {
+class CcxtOrder extends Order {
   private checkOrderInterval!: ReturnType<typeof setInterval>;
 
   public start = async () => {
     if (typeof this.price === 'string') {
-      throw new Error('Price cannot be string for Binance orders');
+      throw new Error('Price cannot be string for ccxt orders'); //voiko price olla string?
     }
     const orderRequest: LimitOrderRequest | StopLimitOrderRequest = {
       orderId: this.orderId,
