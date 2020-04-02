@@ -158,11 +158,11 @@ class ArbitrageTrade {
   }
 
   private getAssets = async () => {
-    //vaatiiko allaolevat asyncin?
-    let opendexBaseAssetMaxSell = async getAssetToCertainExchange(exchange, baseAsset);
-    let opendexQuoteAssetMaxBuy = async getAssetToCertainExchange(exchange, quoteAsset);
-    let exchnageBaseAsset = async getAssetToCertainExchange(exchange, baseAsset);
-    let exchangeQuoteAsset = async getAssetToCertainExchange(exchange, quoteAsset);
+    //vaatiiko allaolevat awaitin?
+    let opendexBaseAssetMaxSell = await getAssetToCertainExchange(exchange, baseAsset);
+    let opendexQuoteAssetMaxBuy = await getAssetToCertainExchange(exchange, quoteAsset);
+    let exchnageBaseAsset = await getAssetToCertainExchange(exchange, baseAsset);
+    let exchangeQuoteAsset = await getAssetToCertainExchange(exchange, quoteAsset);
     this.sellQuantity = Math.min(openDexBaseAssetMaxSell, binanceBaseAsset);
     if (this.sellQuantity > limits[this.baseAsset]) {
       this.sellQuantity = limits[this.baseAsset];
@@ -180,11 +180,12 @@ class ArbitrageTrade {
 
   private get_assets_to_certain_exchange = async(exchange, asset) => {
     let asset = 0;
+    //pitää ettii komento jolla voi tosta listasta tai mapista ettiä ton assetin, ni ei tarvii iffiä.
     this.exchangeAssets.forEach((ownedAsset) => {
       if (
           CURRENCIES.exchange[this.asset] === ownedAsset.asset
         ) {
-           baseAsset = ownedAsset.free;
+           asset = ownedAsset.free;
            this.logger.info(exchange`asset ${ownedAsset.asset}: ${ownedAsset.free} (free), ${ownedAsset.locked} (locked)`); //exchangen pitäis olla tuol sisällä. Pitäiskö $ merkkiä käytää joteni?
           }
         }
