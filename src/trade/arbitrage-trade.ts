@@ -162,18 +162,12 @@ class ArbitrageTrade {
     let opendexQuoteAssetMaxBuy = getAssetToCertainExchange(exchange, quoteAsset);
     let exchnageBaseAsset = getAssetToCertainExchange(exchange, baseAsset);
     let exchangeQuoteAsset = getAssetToCertainExchange(exchange, quoteAsset);
-    this.sellQuantity = Math.min(openDexBaseAssetMaxSell, binanceBaseAsset);
-    if (this.sellQuantity > limits[this.baseAsset]) {
-      this.sellQuantity = limits[this.baseAsset];
-    }
+    this.sellQuantity = Math.min(openDexBaseAssetMaxSell, binanceBaseAsset, limits[this.baseAsset]);
     this.logger.info(`setting ${this.baseAsset} sell quantity to ${this.sellQuantity}`);
     this.buyQuantity = parseFloat(
-      (Math.min(openDexQuoteAssetMaxBuy, binanceQuoteAsset) / this.price!)
+      (Math.min(openDexQuoteAssetMaxBuy, binanceQuoteAsset, limits[this.quoteAsset]) / this.price!)
         .toFixed(8),
     );
-    if (this.buyQuantity > limits[this.quoteAsset]) {
-      this.buyQuantity = limits[this.quoteAsset];
-    }
     this.logger.info(`setting ${this.quoteAsset} buy quantity to ${this.buyQuantity}`);
   }
 
