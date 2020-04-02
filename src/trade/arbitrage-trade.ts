@@ -158,10 +158,11 @@ class ArbitrageTrade {
   }
 
   private getAssets = async () => {
-    let opendexBaseAssetMaxSell = getAssetToCertainExchange(exchange, baseAsset);
-    let opendexQuoteAssetMaxBuy = getAssetToCertainExchange(exchange, quoteAsset);
-    let exchnageBaseAsset = getAssetToCertainExchange(exchange, baseAsset);
-    let exchangeQuoteAsset = getAssetToCertainExchange(exchange, quoteAsset);
+    //vaatiiko allaolevat asyncin?
+    let opendexBaseAssetMaxSell = async getAssetToCertainExchange(exchange, baseAsset);
+    let opendexQuoteAssetMaxBuy = async getAssetToCertainExchange(exchange, quoteAsset);
+    let exchnageBaseAsset = async getAssetToCertainExchange(exchange, baseAsset);
+    let exchangeQuoteAsset = async getAssetToCertainExchange(exchange, quoteAsset);
     this.sellQuantity = Math.min(openDexBaseAssetMaxSell, binanceBaseAsset);
     if (this.sellQuantity > limits[this.baseAsset]) {
       this.sellQuantity = limits[this.baseAsset];
