@@ -264,9 +264,8 @@ class CcxtAPI extends ExchangeAPI {
   }
 
   public getAveragePrice = async (sym: string): Promise<AvgPriceResponse> => {
-    const response = await ;
-    assert.equal(response.status, 200);
-    return { sym, price: response.data.price };
+    const response = await ; //averagePrice ccxt:stä
+    return { sym, price: response.data.price }; //korjaa response.data.price semmoseks et antaa pricen.
   }
 
   public accountInfo = async (): Promise<AccountInfo> => {
