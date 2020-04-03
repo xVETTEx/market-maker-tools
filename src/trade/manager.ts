@@ -44,7 +44,7 @@ class TradeManager {
     const trade = new ArbitrageTrade({
       baseAsset,
       quoteAsset,
-      binance: this.binance,
+      exchange: this.binance,
       opendex: this.opendex,
       logger: this.logger,
     });
