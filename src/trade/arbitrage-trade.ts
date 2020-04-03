@@ -158,11 +158,15 @@ class ArbitrageTrade {
   }
 
   private getAssets = async () => {
+    this.openDexAssets = await this.opendex.getAssets();
+     if (!this.binanceAssets.length) {
+      this.binanceAssets = await this.binance.getAssets();
+    }
     //vaatiiko allaolevat awaitin?
-    let opendexBaseAssetMaxSell = await getAssetToCertainExchange(exchange, baseAsset);
-    let opendexQuoteAssetMaxBuy = await getAssetToCertainExchange(exchange, quoteAsset);
-    let exchnageBaseAsset = await getAssetToCertainExchange(exchange, baseAsset);
-    let exchangeQuoteAsset = await getAssetToCertainExchange(exchange, quoteAsset);
+    let opendexBaseAssetMaxSell = await getAsset(opendex, baseAsset);
+    let opendexQuoteAssetMaxBuy = await getAsset(opendex, quoteAsset);
+    let binanceBaseAsset = await getAsset(binance, baseAsset);
+    let binanceQuoteAsset = await getAssetToCertainExchange(binance, quoteAsset);
     this.sellQuantity = Math.min(openDexBaseAssetMaxSell, binanceBaseAsset);
     if (this.sellQuantity > limits[this.baseAsset]) {
       this.sellQuantity = limits[this.baseAsset];
@@ -178,10 +182,8 @@ class ArbitrageTrade {
     this.logger.info(`setting ${this.quoteAsset} buy quantity to ${this.buyQuantity}`);
   }
 
-  private get_assets_to_certain_exchange = async(exchange, asset) => {
-    let asset = 0;
-    //pitää ettii komento jolla voi tosta listasta tai mapista ettiä ton assetin, ni ei tarvii iffiä.
-    this.exchangeAssets.forEach((ownedAsset) => {
+  private get_asset = async(exchange, asset) => {
+    this.exchange.Assets.forEach((ownedAsset) => {
       if (
           CURRENCIES.exchange[this.asset] === ownedAsset.asset
         ) {
