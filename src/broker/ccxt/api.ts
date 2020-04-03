@@ -269,21 +269,10 @@ class CcxtAPI extends ExchangeAPI {
   }
 
   public accountInfo = async (): Promise<AccountInfo> => {
-    const recvWindow = 5000;
-    const timestamp = new Date().getTime();
-    const queryString = `timestamp=${timestamp}&recvWindow=${recvWindow}`;
-    try {
-      const response = await axios.get(
-          `${ACCOUNT_URL}?${queryString}&signature=${this.signRequest(queryString)}`,
-        {
-          headers: {
-            'X-MBX-APIKEY': this.apiKey,
-          },
-        },
-        );
-      return response.data;
+    balances = await ; //joku ccxt balances funktio
+      return balances;
     } catch (e) {
-      this.logger.error(`failed to fetch account info ${JSON.stringify(e)}`);
+      //tarviiko catch erroria? Tuskin. Mut aiemmin oli joten vois olla hyvä jos nytki olis.
       return { balances: [] };
     }
   }
