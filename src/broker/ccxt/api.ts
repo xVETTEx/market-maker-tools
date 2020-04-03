@@ -269,6 +269,26 @@ class CcxtAPI extends ExchangeAPI {
     return { sym, price: response.data.price };
   }
 
+  public accountInfo = async (): Promise<AccountInfo> => {
+    const recvWindow = 5000;
+    const timestamp = new Date().getTime();
+    const queryString = `timestamp=${timestamp}&recvWindow=${recvWindow}`;
+    try {
+      const response = await axios.get(
+          `${ACCOUNT_URL}?${queryString}&signature=${this.signRequest(queryString)}`,
+        {
+          headers: {
+            'X-MBX-APIKEY': this.apiKey,
+          },
+        },
+        );
+      return response.data;
+    } catch (e) {
+      this.logger.error(`failed to fetch account info ${JSON.stringify(e)}`);
+      return { balances: [] };
+    }
+  }
+
   public getAssets = async (): Promise<Balance[]> => {
     const accountInfo = await this.accountInfo();
     const parsedBalances = accountInfo.balances.map((balance) => {
