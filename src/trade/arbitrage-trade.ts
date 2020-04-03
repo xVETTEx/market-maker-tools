@@ -44,7 +44,7 @@ class ArbitrageTrade {
   private baseAsset: string;
   private quoteAsset: string;
   private opendex: ExchangeBroker;
-  private binance: ExchangeBroker;
+  private exchange: ExchangeBroker;
   private openDexBuyOrder: OpenDexOrder | undefined;
   private openDexSellOrder: OpenDexOrder | undefined;
   private price: number | undefined;
@@ -57,30 +57,30 @@ class ArbitrageTrade {
   private closed = false;
 
   constructor(
-    { logger, binance, opendex, baseAsset, quoteAsset }:
+    { logger, exchange, opendex, baseAsset, quoteAsset }:
     {
       logger: Logger,
       opendex: ExchangeBroker,
-      binance: ExchangeBroker,
+      exchange: ExchangeBroker,
       baseAsset: string,
       quoteAsset: string,
     },
   ) {
     this.logger = logger;
     this.opendex = opendex;
-    this.binance = binance;
+    this.exchange = exchange;
     this.baseAsset = baseAsset;
     this.quoteAsset = quoteAsset;
   }
 
   public start = async () => {
-    const binanceTradingPair = `${CURRENCIES.Binance[this.baseAsset]}${CURRENCIES.Binance[this.quoteAsset]}`;
+    const exchange.TradingPair = `${CURRENCIES.exchange[this.baseAsset]}${CURRENCIES.Binance[this.quoteAsset]}`;
     const openDexTradingPair = `${CURRENCIES.OpenDex[this.baseAsset]}${CURRENCIES.OpenDex[this.quoteAsset]}`;
-    await this.binance.getPrice(binanceTradingPair, this.updateBinancePrice.bind(this));
+    await this.exchange.getPrice(exchangeTradingPair, this.updateexchangePrice.bind(this));
     this.logger.info(`looking for arbitrage trades for ${openDexTradingPair}...`);
   }
 
-  private updateBinancePrice = async (_tradingPair: string, price: number) => {
+  private updateExchangePrice = async (_tradingPair: string, price: number) => {
     if (this.closed) {
       return;
     }
@@ -277,7 +277,7 @@ class ArbitrageTrade {
       binanceBuyOrder.on('fill', () => {
         this.logger.info('sell order partially filled - arbitrage trade complete');
       });
-      await binanceBuyOrder.start();
+      await exchangeBuyOrder.start();
     }
   }
 
