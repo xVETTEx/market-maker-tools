@@ -162,10 +162,11 @@ class ArbitrageTrade {
     let opendexQuoteAssetMaxBuy = getAssetToCertainExchange(exchange, quoteAsset);
     let exchnageBaseAsset = getAssetToCertainExchange(exchange, baseAsset);
     let exchangeQuoteAsset = getAssetToCertainExchange(exchange, quoteAsset);
+    //miten sitä satoshitostr funktiota käytetään?
     this.sellQuantity = Math.min(openDexBaseAssetMaxSell, binanceBaseAsset, limits[this.baseAsset]);
     this.logger.info(`setting ${this.baseAsset} sell quantity to ${this.sellQuantity}`);
     this.buyQuantity = parseFloat(
-      (Math.min(openDexQuoteAssetMaxBuy, binanceQuoteAsset, limits[this.quoteAsset]) / this.price!)
+      (Math.min(openDexQuoteAssetMaxBuy, limits[this.quoteAsset]), binanceQuoteAsset / this.price!)
         .toFixed(8),
     );
     this.logger.info(`setting ${this.quoteAsset} buy quantity to ${this.buyQuantity}`);
