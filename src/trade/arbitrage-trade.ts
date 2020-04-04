@@ -130,7 +130,7 @@ class ArbitrageTrade {
         this.logger.info(`buy order failed: ${reason}`);
       });
       this.openDexBuyOrder.on('fill', () => {
-        this.logger.info('buy order partially filled - init trade on Binance');
+        this.logger.info('buy order partially filled - init trade on Binance'); //pitäis kans sorittaa binance order
       });
       const openDexSellPrice = parseFloat((this.price + this.price * ARB_MARGIN).toFixed(8));
       this.openDexSellOrder = this.opendex.newOrder({
@@ -147,7 +147,7 @@ class ArbitrageTrade {
         this.logger.info(`sell order failed: ${reason}`);
       });
       this.openDexSellOrder.on('fill', () => {
-        this.logger.info('sell order partially filled - init trade on Binance');
+        this.logger.info('sell order partially filled - init trade on Binance'); //pitäis kans suorittaa binancessa treidi.
       });
       this.updateOrdersTimer = setTimeout(this.createOpenDexOrders, ORDER_UPDATE_INTERVAL);
       await Promise.all([
