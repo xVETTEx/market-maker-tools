@@ -195,7 +195,7 @@ describe('ArbitrageTrade', () => {
       jest.resetAllMocks();
     });
 
-    test('it excutes sell order on Binance', () => {
+    test('it executes sell order on Binance', () => {
       arbitrageTrade['orderComplete'](arbitrageTrade['openDexBuyOrder']!['orderId'], coinsToSats(quantity));
       expect(binanceBroker.newOrder).toHaveBeenCalledTimes(1);
       expect(binanceBroker.newOrder).toHaveBeenCalledWith(
