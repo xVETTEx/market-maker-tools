@@ -1,10 +1,7 @@
 import { Stream } from '../stream';
-import WebSocket from 'ws';
 import { Logger } from '../../logger';
 
-// If we haven't received a ping during this time we'll consider
-// socket dead.
-const HEARTBEAT_TIMEOUT = 60 * 1000 * 3 + 1000;
+
 
 class CcxtStream extends Stream {
   constructor(private logger: Logger, private tradingPair: string) {
@@ -12,41 +9,9 @@ class CcxtStream extends Stream {
   }
 
   public start = (): Promise<void> => {
-    return new Promise((resolve) => {
-      clearTimeout(this.pingTimeout);
-      clearTimeout(this.restartTimeout);
-      this.socket.onopen = () => {
-        this.logger.info(`${this.tradingPair} established connection to ${url}`);
-      };
-
-      this.socket.on('ping', this.heartbeat);
-      this.socket.on('open', this.heartbeat);
-      this.socket.on('error', (e) => {
-        this.logger.error(`error from the socket ${e}`);
-      });
-
-      this.socket.onclose = this.onClose;
-      this.socket.onmessage = this.onMessage;
-      this.restartTimeout = setTimeout(async () => {
-        this.logger.warn(`${this.tradingPair} socket timeout reached - restarting`);
-        this.socket.terminate();
-        await this.restart();
-      }, RESTART_TIMEOUT);
-      resolve();
-    });
   }
 
   public close = (): Promise<void> => {
-    clearTimeout(this.restartTimeout);
-    this.socket.terminate();
-    return new Promise((resolve) => {
-      const isAliveCheck = setInterval(() => {
-        if (!this.isAlive) {
-          clearInterval(isAliveCheck);
-          resolve();
-        }
-      });
-    });
   }
 
   private onMessage = (event: WebSocket.MessageEvent) => {
@@ -64,17 +29,6 @@ class CcxtStream extends Stream {
     } else {
       this.logger.info(`${this.tradingPair} stream closed`);
     }
-  }
-
-  private heartbeat = () => {
-    this.logger.info(`heartbeat from ${this.tradingPair} socket - isAlive: ${this.isAlive}`);
-    this.isAlive = true;
-    clearTimeout(this.pingTimeout);
-    this.pingTimeout = setTimeout(async () => {
-      this.isAlive = false;
-      this.socket.terminate();
-      await this.restart();
-    }, HEARTBEAT_TIMEOUT);
   }
 
 }
