@@ -93,6 +93,7 @@ type RawBalance = {
 
 const GET_ASSETS_INTERVAL = 300000;
 const UPDATE_AVERAGE_PRICES_INTERVAL = 300000;
+const GET_PRICE_INTERVAL = ;
 
 class CcxtAPI extends ExchangeAPI {
   private getAssetsInterval: ReturnType<typeof setInterval> | undefined;
@@ -212,14 +213,6 @@ class CcxtAPI extends ExchangeAPI {
       const { tradingPair, orderId } = queryOrder;
       //tähän ccxt komento jolla querytään const balances = await;
       return response.data; //onko tää data se mitä haluun responsaa?
-      } catch (e) {
-        if (e.response && e.response.data && e.response.data.msg) {
-          this.logger.error(`failed to query order info: ${e.response.data.msg}`);
-        } else {
-          this.logger.error(`failed to query order info ${e}`);
-        }
-        return Promise.reject(e);
-      }
     } else {
       // Return mock filled response when live trading is disabled
       return {
