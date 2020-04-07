@@ -4,6 +4,7 @@ import { Logger } from '../../logger';
 
 
 class CcxtStream extends Stream {
+  private interval = ;
   constructor(private logger: Logger, private tradingPair: string) {
     super();
   }
@@ -15,10 +16,13 @@ class CcxtStream extends Stream {
   }
 
   private onInterval = (event: WebSocket.MessageEvent) => {
-    const aggTrade = JSON.parse(event.data.toString());
-    const { p: priceString } = aggTrade;
-    const price = parseFloat(priceString);
+    //hakee ccxt komennolla hinnan
+    const price = parseFloat(priceString); //parsee hinnan, miten pitää parsee?
     this.emit('price', this.tradingPair, price);
+  }
+  
+  public changeInterval = async(interval) => { //intervallin tyyppi
+    this.interval = interval;
   }
 
   private onClose = (event: WebSocket.CloseEvent) => {
