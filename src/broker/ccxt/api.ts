@@ -94,11 +94,14 @@ type RawBalance = {
 const GET_ASSETS_INTERVAL = 300000;
 const UPDATE_AVERAGE_PRICES_INTERVAL = 300000;
 const GET_PRICE_INTERVAL = ;
+const GET_ORDERS_INTERVAL = ;
 
 class CcxtAPI extends ExchangeAPI {
   private getAssetsInterval: ReturnType<typeof setInterval> | undefined;
   private updateAveragePricesInterval: ReturnType<typeof setInterval> | undefined;
+  private getOrdersInterval: ReturnType<typeod setInterval> | undefined;
   private exchangeInfo: ExchangeInfoResponse | undefined;
+  private orderInfo: Map<string, orderInfo>();
   private averageAssetPrices = new Map<string, number>();
   private tradingPairsToMonitor = new Set<string>();
   private logger: Logger;
@@ -134,11 +137,19 @@ class CcxtAPI extends ExchangeAPI {
     const exchangeId = 'binance'
     , exchangeClass = ccxt[exchangeId]
     , exchange = new exchangeClass ({
-        'apiKey': apiKey,
-        'secret': apiSecret,
+        'apiKey': this.apiKey,
+        'secret': this.apiSecret,
         'timeout': 30000,
         'enableRateLimit': true,
     })
+    setInterval(GET_ORDERS_INTERVAL, getOrders()) //onkohan oikee syntaksi, et jatkaa tätä kunnes suljetaan?
+  }
+                                        
+  private getOrdersOnInterval = async() => { //oisko atInterval?
+    orders = exchange.fetchOpenOrders();
+    //pitää orderssit parsia sopivaan mappi muotoon jossa keynä orderId
+    //pitää tyhjentää orderInfo map
+    //täytetään orderinfo map uudelleen
   }
 
   public monitorPriceForTradingPair = async (tradingPair: string) => {
