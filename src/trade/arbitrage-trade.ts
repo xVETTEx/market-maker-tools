@@ -147,7 +147,9 @@ class ArbitrageTrade {
         this.logger.info(`sell order failed: ${reason}`);
       });
       this.openDexSellOrder.on('fill', () => {
+        //oletetaan et parametrina on se filledAMount.
         this.logger.info('sell order partially filled - init trade on Binance'); //pitäis kans suorittaa binancessa treidi.
+        this.orderComplete(openDexSellOrder.orderId, filledAmount); //onko oikeet koodit id:n saamiselle?
       });
       this.updateOrdersTimer = setTimeout(this.createOpenDexOrders, ORDER_UPDATE_INTERVAL);
       await Promise.all([
