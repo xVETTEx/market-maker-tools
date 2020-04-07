@@ -10,7 +10,6 @@ import { CcxtAPI } from './api';
 import { Order } from '../order';
 
 class CcxtOrder extends Order {
-  private checkOrderInterval!: ReturnType<typeof setInterval>;
 
   public start = async () => {
     if (typeof this.price === 'string') {
@@ -30,11 +29,8 @@ class CcxtOrder extends Order {
     }
     this.logger.info(`starting new order: ${JSON.stringify(orderRequest)}`);
     try {
-      this.orderId = await (this.api as BinanceAPI).startOrder(orderRequest);
+      this.orderId = await (this.api as CcxtAPI).startOrder(orderRequest);
       this.logger.info(`order acknowledged with id: ${this.orderId}`);
-      this.checkOrderInterval = setInterval(() => {
-        this.checkOrder();
-      }, 1000);
     } catch (e) {
       this.logger.info(`failed to start the order: ${JSON.stringify(orderRequest)}`);
       this.emit('failure', e);
@@ -82,10 +78,8 @@ class CcxtOrder extends Order {
         // TODO: handle partial fills. Skipping for now since we're
         // switching to CCXT.
         this.emit('complete', this.orderId, this.quantity);
-        clearInterval(this.checkOrderInterval);
       }
     } catch (e) {
-      clearInterval(this.checkOrderInterval);
       this.emit('failure', e);
     }
   }
