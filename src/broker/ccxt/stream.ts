@@ -14,7 +14,7 @@ class CcxtStream extends Stream {
   public close = (): Promise<void> => {
   }
 
-  private onMessage = (event: WebSocket.MessageEvent) => {
+  private onInterval = (event: WebSocket.MessageEvent) => {
     const aggTrade = JSON.parse(event.data.toString());
     const { p: priceString } = aggTrade;
     const price = parseFloat(priceString);
