@@ -10,9 +10,11 @@ class CcxtStream extends Stream {
   }
 
   public start = (): Promise<void> => {
+    //soittaa api classille johki funkioon? returnina saa intervallin
   }
 
   public close = (): Promise<void> => {
+    //soittaa api classiin johonki funktioon joka poista listalta tän pairin.
   }
 
   private onInterval = (event: WebSocket.MessageEvent) => {
@@ -27,7 +29,6 @@ class CcxtStream extends Stream {
 
   private onClose = (event: WebSocket.CloseEvent) => {
     clearTimeout(this.pingTimeout);
-    this.isAlive = false;
     if (event.reason) {
       this.logger.info(`${this.tradingPair} stream closed with reason: ${event.reason}`);
     } else {
