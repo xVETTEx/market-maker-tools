@@ -80,30 +80,33 @@ type ExchangeInfoResponse = {
   symbols: TickerSymbol[],
 };
 
-type AvgPriceResponse = {
-  sym: string,
-  price: string,
-};
-
 type RawBalance = {
   asset: string,
   free: string,
   locked: string,
 };
 
-const GET_ASSETS_INTERVAL = 300000;
-const UPDATE_AVERAGE_PRICES_INTERVAL = 300000;
+type AccountBalance = {
+  //onko oikee syntaksi?
+  timestamp: string;
+  balances: Map<string, RawBalance>(); //onkohan tää nyt ihan toimiva?
+}
+
+type OrderInfo = {
+  //onko oikee syntaksi?
+  //sisältö riippuu siitä mitä ccxt:n api palauttaa.
+}
+
 const GET_PRICE_INTERVAL = ;
 const GET_ORDERS_INTERVAL = ;
 
 class CcxtAPI extends ExchangeAPI {
-  private getAssetsInterval: ReturnType<typeof setInterval> | undefined;
   private updateAveragePricesInterval: ReturnType<typeof setInterval> | undefined;
   private getOrdersInterval: ReturnType<typeod setInterval> | undefined;
   private exchangeInfo: ExchangeInfoResponse | undefined;
   private orderInfo: Map<string, orderInfo>();
-  private averageAssetPrices = new Map<string, number>();
   private tradingPairsToMonitor = new Set<string>();
+  private accountBalance = accountBalance; //onko oikee tapa sanoo et type on accountBalance?
   private logger: Logger;
   private apiKey: string;
   private apiSecret: string;
@@ -272,16 +275,8 @@ class CcxtAPI extends ExchangeAPI {
     return { sym, price: response.data.price }; //korjaa response.data.price semmoseks et antaa pricen.
   }
 
-  public accountInfo = async (): Promise<AccountInfo> => {
-    balances = await ; //joku ccxt balances funktio
-      return balances;
-    } catch (e) {
-      //tarviiko catch erroria? Tuskin. Mut aiemmin oli joten vois olla hyvä jos nytki olis.
-      return { balances: [] };
-    }
-  }
-
   public getAssets = async (): Promise<Balance[]> => {
+    //kattoo accountInfo muuttujasta millon viimeks fetchattu?
     const accountInfo = await this.accountInfo();
     const parsedBalances = accountInfo.balances.map((balance) => {
       return {
@@ -374,18 +369,6 @@ class CcxtAPI extends ExchangeAPI {
       }
       return Promise.reject(e);
     }
-  }
-
-  private setAveragePrices = async () => {
-    const averagePricesPromises: Promise<any>[] = [];
-    this.tradingPairsToMonitor.forEach((tp) => {
-      averagePricesPromises.push(this.getAveragePrice(tp));
-    });
-    const averagePriceResponses = await Promise.all(averagePricesPromises);
-    averagePriceResponses.forEach((averagePriceResponse) => {
-      this.logger.info(`updated 5 minute average price for ${averagePriceResponse.sym}: ${averagePriceResponse.price}`);
-      this.averageAssetPrices.set(averagePriceResponse.sym, parseFloat(averagePriceResponse.price));
-    });
   }
 
 }
