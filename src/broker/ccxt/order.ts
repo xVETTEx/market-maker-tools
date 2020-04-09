@@ -58,7 +58,7 @@ class CcxtOrder extends Order {
     }
   }
 
-  private checkOrder = async () => {
+  public checkOrder = async () => {
     if (
       !this.orderId ||
       this.status === OrderStatus.Filled
