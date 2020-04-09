@@ -101,8 +101,7 @@ const GET_PRICE_INTERVAL = ;
 const GET_ORDERS_INTERVAL = ;
 
 class CcxtAPI extends ExchangeAPI {
-  private updateAveragePricesInterval: ReturnType<typeof setInterval> | undefined;
-  private getOrdersInterval: ReturnType<typeod setInterval> | undefined;
+  private getOrdersInterval: ReturnType<typeof setInterval> | undefined;
   private exchangeInfo: ExchangeInfoResponse | undefined;
   private orderInfo: Map<string, orderInfo>();
   private tradingPairsToMonitor = new Set<string>();
