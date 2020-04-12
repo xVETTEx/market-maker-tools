@@ -240,11 +240,7 @@ class CcxtAPI extends ExchangeAPI {
       throw new Error('exchangeInfo has not been fetched');
     }
     const tradingPair = `${baseAsset}${quoteAsset}`;
-    let avgPrice = this.averageAssetPrices.get(tradingPair);
-    if (!avgPrice) {
-      await this.monitorPriceForTradingPair(tradingPair);
-      avgPrice = this.averageAssetPrices.get(tradingPair)!;
-    }
+    let price = ; 
     const filters = this.exchangeInfo!.symbols
       .filter((sym) => {
         return sym.baseAsset === baseAsset && sym.quoteAsset === quoteAsset;
@@ -252,7 +248,7 @@ class CcxtAPI extends ExchangeAPI {
       .map(sym => sym.filters)[0];
     const minNotionalFilter = filters
       .filter(filt => filt.filterType === 'MIN_NOTIONAL')[0] as MinNotionalFilter;
-    const minNotional = avgPrice * quantity - parseFloat(minNotionalFilter.minNotional);
+    const minNotional = price * quantity - parseFloat(minNotionalFilter.minNotional);
     if (minNotional <= 0) {
       throw new Error('MIN_NOTIONAL filter failure');
     }
