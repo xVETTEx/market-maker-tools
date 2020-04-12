@@ -349,12 +349,9 @@ class CcxtAPI extends ExchangeAPI {
           tradeData.stopPrice = stopPrice;
         }
       }
-      const queryStringData = querystring.stringify(tradeData);
-      let url = `${TEST_ORDER_URL}?signature=${this.signRequest(queryStringData)}`;
       if (process.env.LIVE_TRADING) {
-        url = `${ORDER_URL}?signature=${this.signRequest(queryStringData)}`;
+        const response = await ; //tähän ccxt:n newOrder
       }
-      const response = await ; //tähän ccxt:n newOrder
       return response.data; //onko data oikea
     } catch (e) {
       if (e.response && e.response.data && e.response.data.msg) {
@@ -362,7 +359,7 @@ class CcxtAPI extends ExchangeAPI {
       } else {
         this.logger.error(`failed to create new order ${e}`);
       }
-      return Promise.reject(e);
+      return Promise.reject(e); //mikäs tää on?
     }
   }
 
