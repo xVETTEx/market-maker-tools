@@ -125,15 +125,15 @@ class ArbitrageTrade {
         quantity: this.buyQuantity,
         price: openDexBuyPrice,
       }) as OpenDexOrder;
-      this.openDexBuyOrder.on('complete', this.orderComplete.bind(this)); //complete viestin pitäis sisältää uus fillattu quantity
+      this.openDexBuyOrder.on('complete', this.orderComplete(opendexBuyOrder, filledAmount); //complete viestin pitäis sisältää uus fillattu quantity
       //ja se pitäis antaa ordercompletelle.
       this.openDexBuyOrder.on('failure', (reason: string) => {
         this.logger.info(`buy order failed: ${reason}`);
       });
       this.openDexBuyOrder.on('fill', () => {
         this.logger.info('buy order partially filled - init trade on Binance');
-        //oletetaan et parametrina on se filledAMount.
-        this.logger.info('sell order partially filled - init trade on Binance'); //pitäis kans suorittaa binancessa treidi.
+        //oletetaan et parametrina on se filledAMount. Miten saan sen?
+        filledAmount = ;
         this.orderComplete(openDexSellOrder.orderId, filledAmount); //onko oikeet koodit id:n saamiselle?
       });
       const openDexSellPrice = parseFloat((this.price + this.price * ARB_MARGIN).toFixed(8));
@@ -146,13 +146,14 @@ class ArbitrageTrade {
         quantity: this.sellQuantity,
         price: openDexSellPrice,
       }) as OpenDexOrder;
-      this.openDexSellOrder.on('complete', this.orderComplete.bind(this)); //complete viestin pitäis sisältää uus fillattu quantity
+      this.openDexSellOrder.on('complete', this.orderComplete(this.opendexSellOrder, filledAmount)); //complete viestin pitäis sisältää uus fillattu quantity
       //ja se pitäis antaa ordercompletelle.
       this.openDexSellOrder.on('failure', (reason: string) => {
         this.logger.info(`sell order failed: ${reason}`);
       });
       this.openDexSellOrder.on('fill', () => {
-        //oletetaan et parametrina on se filledAMount.
+        //oletetaan et parametrina on se filledAMount. Ni se on suoraan quantity, mut miten saan sen?
+        filledAmount = ;
         this.logger.info('sell order partially filled - init trade on Binance'); //pitäis kans suorittaa binancessa treidi.
         this.orderComplete(openDexSellOrder.orderId, filledAmount); //onko oikeet koodit id:n saamiselle?
       });
