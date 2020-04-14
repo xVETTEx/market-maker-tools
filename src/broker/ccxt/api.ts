@@ -311,7 +311,7 @@ class CcxtAPI extends ExchangeAPI {
         orderSide: side,
         orderType: type,
         quantity,
-      } = order;
+      } = order; //mitä vittua tää tarkottaa?
       const qty = await this.verifyQuantity(baseAsset, quoteAsset, quantity);
       const timestamp = new Date().getTime();
       const tradeData: { [key: string]: string | number } = {
@@ -344,7 +344,8 @@ class CcxtAPI extends ExchangeAPI {
         }
       }
       if (process.env.LIVE_TRADING) {
-        const response = await ; //tähän ccxt:n newOrder
+        const response = await binance.createOrder(symbol, type, side, amount); //tähän ccxt:n newOrder. 
+        //Oisko parempi et ois exchange eikä binance? Varmaa parempi et latetaa parametriks vaa joku type tai muu, jotta price ja muut menee optionaalina?
       }
       return response.data; //onko data oikea
     } catch (e) {
