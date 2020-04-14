@@ -167,26 +167,18 @@ class ArbitrageTrade {
     let opendexQuoteAssetMaxBuy = await getAsset(opendex, quoteAsset);
     let binanceBaseAsset = await getAsset(binance, baseAsset);
     let binanceQuoteAsset = await getAssetToCertainExchange(binance, quoteAsset);
-    this.sellQuantity = Math.min(openDexBaseAssetMaxSell, binanceBaseAsset);
-    if (this.sellQuantity > limits[this.baseAsset]) {
-      this.sellQuantity = limits[this.baseAsset];
-    }
+    this.sellQuantity = Math.min(openDexBaseAssetMaxSell, binanceBaseAsset, limits[this.baseAsset]);
     this.logger.info(`setting ${this.baseAsset} sell quantity to ${this.sellQuantity}`);
     this.buyQuantity = parseFloat(
-      (Math.min(openDexQuoteAssetMaxBuy, binanceQuoteAsset) / this.price!)
+      (Math.min(openDexQuoteAssetMaxBuy, binanceQuoteAsset) / this.price!, limits[this.quoteAsset])
         .toFixed(8),
     );
-    if (this.buyQuantity > limits[this.quoteAsset]) {
-      this.buyQuantity = limits[this.quoteAsset];
-    }
     this.logger.info(`setting ${this.quoteAsset} buy quantity to ${this.buyQuantity}`);
   }
 
-  private get_asset = async(exchange, asset) => {
+  private getAsset = async(exchange, asset) => {
     this.exchange.Assets.forEach((ownedAsset) => {
-      if (
-          CURRENCIES.exchange[this.asset] === ownedAsset.asset
-        ) {
+      if (CURRENCIES.exchange[this.asset] === ownedAsset.asset) {
            asset = ownedAsset.free;
            this.logger.info(exchange`asset ${ownedAsset.asset}: ${ownedAsset.free} (free), ${ownedAsset.locked} (locked)`); //exchangen pitäis olla tuol sisällä. Pitäiskö $ merkkiä käytää joteni?
           }
