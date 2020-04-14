@@ -158,10 +158,6 @@ class ArbitrageTrade {
   }
 
   private getAssets = async () => {
-    this.openDexAssets = await this.opendex.getAssets();
-     if (!this.binanceAssets.length) {
-      this.binanceAssets = await this.binance.getAssets();
-    }
     //vaatiiko allaolevat awaitin?
     let opendexBaseAssetMaxSell = await getAsset(opendex, baseAsset);
     let opendexQuoteAssetMaxBuy = await getAsset(opendex, quoteAsset);
