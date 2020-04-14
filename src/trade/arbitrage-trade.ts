@@ -173,13 +173,9 @@ class ArbitrageTrade {
   }
 
   private getAsset = async(exchange, asset) => {
-    this.exchange.Assets.forEach((ownedAsset) => {
-      if (CURRENCIES.exchange[this.asset] === ownedAsset.asset) {
-           asset = ownedAsset.free;
-           this.logger.info(exchange`asset ${ownedAsset.asset}: ${ownedAsset.free} (free), ${ownedAsset.locked} (locked)`); //exchangen pitäis olla tuol sisällä. Pitäiskö $ merkkiä käytää joteni?
-          }
-        }
-      });
+    assets = await this.exchange.getAssets();
+    freeAmount = assets.get('asset').free; //toimiiko?
+    this.logger.info(exchange, `asset ${ownedAsset.asset}: ${ownedAsset.free} (free), ${ownedAsset.locked} (locked)`); //exchangen pitäis olla tuol sisällä. Pitäiskö $ merkkiä käytää joteni?
     return asset //kuinka returnaa? Pitikö funktion alkuun nää typet määrittää?
 }
 
