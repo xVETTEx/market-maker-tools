@@ -5,8 +5,9 @@ import { Logger } from '../../logger';
 
 class CcxtStream extends Stream {
   private interval = ;
-  constructor(private logger: Logger, private tradingPair: string) {
-    super();
+  constructor(private logger: Logger, private tradingPair: string) { //mitä noi privatet tossa meinaa? Tarkottaako et ei tarvii uuestaa määritellä niitä ees?
+    super(); //mikä vittu tää super on ja tarvitaanko tällästä?
+    this.tradingPair = trandingPair;
   }
 
   public start = (): Promise<void> => {
@@ -18,6 +19,7 @@ class CcxtStream extends Stream {
   }
 
   private onInterval = () => {
+    price = ; //ccxt komento hinnan hakemiseen.
     const price = parseFloat(priceString); //parsee hinnan, miten pitää parsee?
     this.emit('price', this.tradingPair, price);
   }
