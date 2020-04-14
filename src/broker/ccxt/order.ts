@@ -79,6 +79,7 @@ class CcxtOrder extends Order {
         // switching to CCXT.
         this.emit('complete', this.orderId, this.quantity);
       }
+      if (orderInfo.status === OrderStatus.
     } catch (e) {
       this.emit('failure', e);
     }
