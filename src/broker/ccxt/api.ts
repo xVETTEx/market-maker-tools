@@ -144,16 +144,9 @@ class CcxtAPI extends ExchangeAPI {
         'timeout': 30000,
         'enableRateLimit': true,
     })
-    setInterval(GET_ORDERS_INTERVAL, getOrders()) //onkohan oikee syntaksi, et jatkaa tätä kunnes suljetaan?
+    setInterval(queryOrdersInternal, ); //onko oikein et tota funktiota kutsutaan eikä queryOrders funktiota?
   }
                                         
-  private getOrdersOnInterval = async() => { //oisko atInterval?
-    orders = exchange.fetchOpenOrders();
-    //pitää orderssit parsia sopivaan mappi muotoon jossa keynä orderId
-    //pitää tyhjentää orderInfo map
-    //täytetään orderinfo map uudelleen
-  }
-
   public monitorPriceForTradingPair = async (tradingPair: string) => {
     const previousSize = this.tradingPairsToMonitor.size;
     this.tradingPairsToMonitor.add(tradingPair);
@@ -182,7 +175,8 @@ class CcxtAPI extends ExchangeAPI {
   }
 
   public queryOrder = async (queryOrderRequest: QueryOrderRequest): Promise<QueryOrderResponse> => {
-    const queryOrderResponse = await this.queryOrderInternal(queryOrderRequest);
+    const queryOrderResponse = ; //tähän order class soittaa. 
+                                        //Ja täs pitäis tän classin orderInfo muuttujasta saada haettavalle orderille tiedot.
     return {
       tradingPair: queryOrderResponse.symbol,
       status: queryOrderResponse.status,
@@ -221,7 +215,7 @@ class CcxtAPI extends ExchangeAPI {
     }
   }
 
-  private queryOrderInternal = async (queryOrder: QueryOrderRequest): Promise<QueryOrderResponseCcxt> => {
+  private queryOrdersInternal = async (queryOrder: QueryOrderRequest): Promise<QueryOrderResponseCcxt> => {
     if (process.env.LIVE_TRADING) {
       const { tradingPair, orderId } = queryOrder;
       //tähän ccxt komento jolla querytään const balances = await;
