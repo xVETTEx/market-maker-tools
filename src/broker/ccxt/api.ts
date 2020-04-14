@@ -104,7 +104,7 @@ class CcxtAPI extends ExchangeAPI {
   private getOrdersInterval: ReturnType<typeof setInterval> | undefined;
   private exchangeInfo: ExchangeInfoResponse | undefined;
   private orderInfo: Map<string, orderInfo>();
-  private tradingPairsToMonitor = new Set<string>();
+  private tradingPairsToMonitor = int; //onko int javascriptissä joku?
   private accountBalance = accountBalance; //onko oikee tapa sanoo et type on accountBalance?
   private logger: Logger;
   private apiKey: string;
@@ -147,23 +147,18 @@ class CcxtAPI extends ExchangeAPI {
     setInterval(queryOrdersInternal, ); //onko oikein et tota funktiota kutsutaan eikä queryOrders funktiota?
   }
                                         
-  public monitorPriceForTradingPair = async (tradingPair: string) => {
-    const previousSize = this.tradingPairsToMonitor.size;
-    this.tradingPairsToMonitor.add(tradingPair);
-    const newSize = this.tradingPairsToMonitor.size;
-    if (newSize > previousSize) {
-      const avgPriceResponse = await this.getAveragePrice(tradingPair);
-      this.averageAssetPrices.set(
-        avgPriceResponse.sym,
-        parseFloat(avgPriceResponse.price),
-      );
-    }
+  public monitorPriceForTradingPair = async () => { //tarviiko asyncciä?
+    this.tradingPairsToMonitor.; //tohon se et kasvata yhellä.
+    //tähän se et ilmottaa forEach stream luokille uuden intervallin. CHangeintervall funktioon soittaa. Pitää varmaa
+    //kuitenki olla pairien nimet listana tossa trandingPairsToMonitor, jotta osaa ilmottaa kaikille.
+    //joku logiikka jolla laskee nää jutut.
   }
 
-  public stopMonitoringPrice = (tradingPair: string) => {
-    this.tradingPairsToMonitor.delete(tradingPair);
-    this.averageAssetPrices.delete(tradingPair);
+  public stopMonitoringPrice = () => {
+    this.tradingPairsToMonitor.; //tohon se et laske yhellä.
+    //tähän se et ilmottaa forEach stream luokille uuden intervallin. CHangeintervall funktioon soittaa.
   }
+                                        
 
   public stop = async () => {
     if (this.getAssetsInterval) {
