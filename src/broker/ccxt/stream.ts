@@ -17,8 +17,7 @@ class CcxtStream extends Stream {
     //soittaa api classiin johonki funktioon joka poista listalta tän pairin.
   }
 
-  private onInterval = (event: WebSocket.MessageEvent) => {
-    //hakee ccxt komennolla hinnan
+  private onInterval = () => {
     const price = parseFloat(priceString); //parsee hinnan, miten pitää parsee?
     this.emit('price', this.tradingPair, price);
   }
